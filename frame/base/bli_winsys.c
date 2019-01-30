@@ -14,9 +14,9 @@
     - Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    - Neither the name of The University of Texas at Austin nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+    - Neither the name(s) of the copyright holder(s) nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,12 +32,40 @@
 
 */
 
-#ifdef _MSC_VER
-int bli_setenv(const char *name, const char *value, int overwrite) {
-    _putenv_s(name, value);
-}
+#include "blis.h"
 
-void bli_sleep(int x) {
-    Sleep(x*1000);
+#ifdef _MSC_VER
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
+#if 0
+// NOTE: This function is no longer needed by BLIS since BLIS no longer
+// makes any attempt to change environment variables; rather, it only
+// reads them. We can keep it here for some time before removing it,
+// though.
+
+int bli_setenv( const char *name, const char *value, int overwrite )
+{
+#ifdef _MSC_VER
+	// Windows.
+	_putenv_s( name, value );
+#else
+	// Everything else: Linux, OS X, etc.
+	setenv( name, value, overwrite );
+#endif
 }
 #endif
+
+void bli_sleep( unsigned int secs )
+{
+#ifdef _MSC_VER
+	// Windows.
+	Sleep( secs * 1000 );
+#else
+	// Everything else: Linux, OS X, etc.
+	sleep( secs );
+#endif
+}
+

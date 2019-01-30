@@ -16,14 +16,18 @@ but many others have contributed code and feedback, including
   Vernon Austel                             (IBM, T.J. Watson Research Center)
   Jed Brown             @jedbrown           (Argonne National Laboratory)
   Robin Christ          @robinchrist
+  Kay Dewhurst          @jkd2016            (Max Planck Institute, Halle, Germany)
+  Jeff Diamond                              (Oracle)
   Johannes Dieterich    @iotamudelta
   Krzysztof Drewniak    @krzysz00
   Victor Eijkhout       @VictorEijkhout     (Texas Advanced Computing Center)
   Isuru Fernando        @isuruf
   Roman Gareev          @gareevroman
-  John Gunnels                              (IBM, T.J. Watson Research Center)
-  Jeff Hammond          @jeffhammond        (Intel)
+  Richard Goldschmidt   @SuperFluffy
   Chris Goodyer
+  John Gunnels          @jagunnels          (IBM, T.J. Watson Research Center)
+  Ali Emre Gülcü        @Lephar
+  Jeff Hammond          @jeffhammond        (Intel)
   Jacob Gorm Hansen     @jacobgorm
   Jean-Michel Hautbois  @jhautbois
   Ian Henriksen         @insertinterestingnamehere
@@ -32,15 +36,16 @@ but many others have contributed code and feedback, including
   Stefan Husmann        @stefanhusmann
   Francisco Igual       @figual             (Universidad Complutense de Madrid)
   Tony Kelman           @tkelman
-  Lee Killough                              (Cray)
-  Mike Kistler                              (IBM, Austin Research Laboratory)
+  Lee Killough          @leekillough        (Cray)
+  Mike Kistler          @mkistler           (IBM, Austin Research Laboratory)
+  Michael Lehn          @michael-lehn
+  Dave Love             @loveshack
+  Tze Meng Low                              (The University of Texas at Austin)
+  Ye Luo                @ye-luo             (Argonne National Laboratory)
   Ricardo Magana        @magania            (Hewlett Packard Enterprise)
   Bryan Marker          @bamarker           (The University of Texas at Austin)
   Devin Matthews        @devinamatthews     (The University of Texas at Austin)
   Stefanos Mavros       @smavros
-  Michael Lehn          @michael-lehn
-  Dave Love             @loveshack
-  Tze Meng Low                              (The University of Texas at Austin)
   Nisanth Padinharepatt                     (AMD)
   Devangi Parikh        @dnparikh           (The University of Texas at Austin)
   Elmar Peise           @elmar-peise        (RWTH-Aachen)
@@ -50,7 +55,7 @@ but many others have contributed code and feedback, including
   Mathieu Poumeyrol     @kali
                         @qnerd
   Michael Rader         @mrader1248
-  Pradeep Rao                               (AMD)
+  Pradeep Rao           @pradeeptrgit       (AMD)
   Aleksei Rechinskii
   Karl Rupp             @karlrupp
   Martin Schatz                             (The University of Texas at Austin)
@@ -64,12 +69,14 @@ but many others have contributed code and feedback, including
   Vladimir Sukarev
   Santanu Thangaraj                         (AMD)
   Rhys Ulerich          @RhysU              (The University of Texas at Austin)
-  Robert van de Geijn                       (The University of Texas at Austin)
-  Kiran Varaganti                           (AMD)
+  Robert van de Geijn   @rvdg               (The University of Texas at Austin)
+  Kiran Varaganti       @kvaragan           (AMD)
   Natalia Vassilieva                        (Hewlett Packard Enterprise)
   Zhang Xianyi          @xianyi             (Chinese Academy of Sciences)
   Benda Xu              @heroxbd
-  Chenhan Yu                                (The University of Texas at Austin)
+  Costas Yamin          @cosstas
+  Chenhan Yu            @ChenhanYu          (The University of Texas at Austin)
+  M. Zhou               @cdluminate
 
 BLIS's development was partially funded by grants from industry
 partners, including

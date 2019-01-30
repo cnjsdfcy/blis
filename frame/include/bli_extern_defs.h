@@ -14,9 +14,9 @@
     - Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    - Neither the name of The University of Texas at Austin nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+    - Neither the name(s) of the copyright holder(s) nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -38,11 +38,11 @@
 #if !defined(BLIS_ENABLE_SHARED) || !defined(_MSC_VER)
 #define BLIS_EXPORT
 #else
+// Windows builds require us to explicitly identify global variable symbols
+// to be imported from the .dll.
 #ifdef BLIS_IS_BUILDING_LIBRARY
 #define BLIS_EXPORT __declspec(dllexport)
 #else
-// Windows builds require us to explicitly identify global variable symbols
-// to be imported from the .dll.
 #define BLIS_EXPORT __declspec(dllimport)
 #endif
 #endif

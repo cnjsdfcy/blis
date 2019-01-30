@@ -14,9 +14,9 @@
     - Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    - Neither the name of The University of Texas at Austin nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+    - Neither the name(s) of the copyright holder(s) nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -67,6 +67,7 @@ bool_t   bli_cpuid_is_piledriver( uint32_t family, uint32_t model, uint32_t feat
 bool_t   bli_cpuid_is_bulldozer( uint32_t family, uint32_t model, uint32_t features );
 
 // ARM
+bool_t   bli_cpuid_is_thunderx2( uint32_t model, uint32_t part, uint32_t features );
 bool_t   bli_cpuid_is_cortexa57( uint32_t model, uint32_t part, uint32_t features );
 bool_t   bli_cpuid_is_cortexa53( uint32_t model, uint32_t part, uint32_t features );
 bool_t   bli_cpuid_is_cortexa15( uint32_t model, uint32_t part, uint32_t features );
@@ -95,9 +96,9 @@ uint32_t bli_cpuid_query( uint32_t* family, uint32_t* model, uint32_t* features 
     - Redistributions in binary form must reproduce the above copyright
       notice, this list of conditions and the following disclaimer in the
       documentation and/or other materials provided with the distribution.
-    - Neither the name of The University of Texas at Austin nor the names
-      of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
+    - Neither the name(s) of the copyright holder(s) nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT

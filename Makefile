@@ -14,9 +14,9 @@
 #   - Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
 #     documentation and/or other materials provided with the distribution.
-#   - Neither the name of The University of Texas at Austin nor the names
-#     of its contributors may be used to endorse or promote products
-#     derived from this software without specific prior written permission.
+#   - Neither the name(s) of the copyright holder(s) nor the names of its
+#     contributors may be used to endorse or promote products derived
+#     from this software without specific prior written permission.
 #
 #  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 #  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -51,9 +51,11 @@
         flat-header flat-cblas-header \
         test \
         testblas blastest-f2c blastest-bin blastest-run \
-        testblis testsuite testsuite-bin testsuite-run \
-        testblis-fast testsuite-run-fast \
-        check checkblas checkblis checkblis-fast \
+        testsuite testsuite-bin \
+        testsuite-run testsuite-run-fast testsuite-run-md testsuite-run-salt \
+        testblis testblis-fast testblis-md testblis-salt \
+        check checkblas \
+        checkblis checkblis-fast checkblis-md checkblis-salt \
         install-headers install-libs install-lib-symlinks \
         showconfig \
         clean cleanmk cleanh cleanlib distclean \
@@ -116,18 +118,16 @@ BASE_OBJ_SANDBOX_PATH  := $(BASE_OBJ_PATH)/$(SANDBOX_DIR)
 
 # --- Define install target names for static libraries ---
 
-LIBBLIS_A_VERS_CONF_INST  := $(INSTALL_LIBDIR)/$(LIBBLIS)-$(VERS_CONF).a
 LIBBLIS_A_INST            := $(INSTALL_LIBDIR)/$(LIBBLIS_A)
 
 # --- Define install target names for shared libraries ---
 
-LIBBLIS_SO_VERS_CONF_INST := $(INSTALL_LIBDIR)/$(LIBBLIS)-$(VERS_CONF).$(SHLIB_EXT)
 LIBBLIS_SO_INST           := $(INSTALL_LIBDIR)/$(LIBBLIS_SO)
 LIBBLIS_SO_MAJ_INST       := $(INSTALL_LIBDIR)/$(LIBBLIS_SONAME)
 
 ifeq ($(IS_WIN),yes)
-# The 'install' target does not create symlinks for Windows builds, so we don't bother
-# defining LIBBLIS_SO_MMB_INST.
+# The 'install' target does not create symlinks for Windows builds, so we don't
+# bother defining LIBBLIS_SO_MMB_INST.
 LIBBLIS_SO_MMB_INST       :=
 else
 LIBBLIS_SO_MMB_INST       := $(INSTALL_LIBDIR)/$(LIBBLIS).$(LIBBLIS_SO_MMB_EXT)
@@ -313,6 +313,9 @@ BLAT_CFLAGS            := -Wno-parentheses \
                           -I$(BLASTEST_F2C_SRC_PATH) \
                           -I. -DHAVE_BLIS_H
 
+# Suppress warnings about possibly uninitialized variables for the BLAS
+# test driver code (as output from f2c), which is riddled with such
+# variables, but only if the option to do so is supported.
 ifeq ($(CC_VENDOR),gcc)
 BLAT_CFLAGS            += -Wno-maybe-uninitialized
 endif
@@ -331,6 +334,10 @@ TESTSUITE_CONF_GEN_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_CONF_GEN)
 TESTSUITE_CONF_OPS_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_CONF_OPS)
 TESTSUITE_FAST_GEN_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_FAST_GEN)
 TESTSUITE_FAST_OPS_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_FAST_OPS)
+TESTSUITE_MIXD_GEN_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_MIXD_GEN)
+TESTSUITE_MIXD_OPS_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_MIXD_OPS)
+TESTSUITE_SALT_GEN_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_SALT_GEN)
+TESTSUITE_SALT_OPS_PATH := $(DIST_PATH)/$(TESTSUITE_DIR)/$(TESTSUITE_SALT_OPS)
 
 # The locations of the test suite source directory and the local object
 # directory.
@@ -347,6 +354,16 @@ MK_TESTSUITE_OBJS       := $(sort \
                             )
 
 # The test suite binary executable filename.
+# NOTE: The TESTSUITE_WRAPPER variable defaults to the empty string if it
+# is not already set, in which case it has no effect lateron when the
+# testsuite binary is executed via lines such as
+#
+#   $(TESTSUITE_WRAPPER) ./$(TESTSUITE_BIN) ... > $(TESTSUITE_OUT_FILE)
+#
+# The reason TESTSUITE_WRAPPER is employed in this way is so that some
+# unusual environments (e.g. ARM) can run the testsuite through some other
+# binary. See .travis.yml for details on how the variable is employed in
+# practice.
 TESTSUITE_BIN           := test_$(LIBBLIS).x
 TESTSUITE_WRAPPER       ?=
 
@@ -626,20 +643,20 @@ $(LIBBLIS_SO_PATH): $(MK_BLIS_OBJS)
 ifeq ($(ENABLE_VERBOSE),yes)
 ifeq ($(ARG_MAX_HACK),yes)
 	$(file > $@.in,$^)
-	$(LINKER) $(SOFLAGS) $(LDFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) @$@.in
+	$(LINKER) $(SOFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) @$@.in $(LDFLAGS)
 	$(RM_F) $@.in
 else
-	$(LINKER) $(SOFLAGS) $(LDFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) $?
+	$(LINKER) $(SOFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) $? $(LDFLAGS)
 endif
 else # ifeq ($(ENABLE_VERBOSE),no)
 ifeq ($(ARG_MAX_HACK),yes)
 	@echo "Dynamically linking $@"
 	@$(file > $@.in,$^)
-	@$(LINKER) $(SOFLAGS) $(LDFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) @$@.in
+	@$(LINKER) $(SOFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) @$@.in $(LDFLAGS)
 	@$(RM_F) $@.in
 else
 	@echo "Dynamically linking $@"
-	@$(LINKER) $(SOFLAGS) $(LDFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) $?
+	@$(LINKER) $(SOFLAGS) -o $(LIBBLIS_SO_OUTPUT_NAME) $? $(LDFLAGS)
 endif
 endif
 
@@ -759,6 +776,10 @@ testblis: testsuite
 
 testblis-fast: testsuite-run-fast
 
+testblis-md: testsuite-run-md
+
+testblis-salt: testsuite-run-salt
+
 testsuite: testsuite-run
 
 testsuite-bin: check-env $(TESTSUITE_BIN)
@@ -810,6 +831,36 @@ else
 	                     > $(TESTSUITE_OUT_FILE)
 endif
 
+# A rule to run the testsuite using the input.*.md files, which
+# run a set of tests designed to only exercise mixed-datatype gemm.
+testsuite-run-md: testsuite-bin
+ifeq ($(ENABLE_VERBOSE),yes)
+	$(TESTSUITE_WRAPPER) ./$(TESTSUITE_BIN) -g $(TESTSUITE_MIXD_GEN_PATH) \
+	                   -o $(TESTSUITE_MIXD_OPS_PATH) \
+	                    > $(TESTSUITE_OUT_FILE)
+
+else
+	@echo "Running $(TESTSUITE_BIN) (mixed dt) with output redirected to '$(TESTSUITE_OUT_FILE)'"
+	@$(TESTSUITE_WRAPPER) ./$(TESTSUITE_BIN) -g $(TESTSUITE_MIXD_GEN_PATH) \
+	                    -o $(TESTSUITE_MIXD_OPS_PATH) \
+	                     > $(TESTSUITE_OUT_FILE)
+endif
+
+# A rule to run the testsuite using the input.*.salt files, which
+# simulates application-level threading across operation tests.
+testsuite-run-salt: testsuite-bin
+ifeq ($(ENABLE_VERBOSE),yes)
+	$(TESTSUITE_WRAPPER) ./$(TESTSUITE_BIN) -g $(TESTSUITE_SALT_GEN_PATH) \
+	                   -o $(TESTSUITE_SALT_OPS_PATH) \
+	                    > $(TESTSUITE_OUT_FILE)
+
+else
+	@echo "Running $(TESTSUITE_BIN) (salt) with output redirected to '$(TESTSUITE_OUT_FILE)'"
+	@$(TESTSUITE_WRAPPER) ./$(TESTSUITE_BIN) -g $(TESTSUITE_SALT_GEN_PATH) \
+	                    -o $(TESTSUITE_SALT_OPS_PATH) \
+	                     > $(TESTSUITE_OUT_FILE)
+endif
+
 # Check the results of the BLIS testsuite.
 checkblis: testsuite-run
 ifeq ($(ENABLE_VERBOSE),yes)
@@ -820,6 +871,22 @@ endif
 
 # Check the results of the BLIS testsuite (fast).
 checkblis-fast: testsuite-run-fast
+ifeq ($(ENABLE_VERBOSE),yes)
+	- $(TESTSUITE_CHECK_PATH) $(TESTSUITE_OUT_FILE)
+else
+	@- $(TESTSUITE_CHECK_PATH) $(TESTSUITE_OUT_FILE)
+endif
+
+# Check the results of the BLIS testsuite (mixed-datatype).
+checkblis-md: testsuite-run-md
+ifeq ($(ENABLE_VERBOSE),yes)
+	- $(TESTSUITE_CHECK_PATH) $(TESTSUITE_OUT_FILE)
+else
+	@- $(TESTSUITE_CHECK_PATH) $(TESTSUITE_OUT_FILE)
+endif
+
+# Check the results of the BLIS testsuite (salt).
+checkblis-salt: testsuite-run-salt
 ifeq ($(ENABLE_VERBOSE),yes)
 	- $(TESTSUITE_CHECK_PATH) $(TESTSUITE_OUT_FILE)
 else
@@ -894,7 +961,7 @@ else
 	@$(INSTALL) -m 0644 $< $@
 endif
 
-else
+else # ifeq ($(IS_WIN),yes)
 
 # Windows library (.dll and .lib) installation rules.
 $(INSTALL_LIBDIR)/%.$(SHLIB_EXT): $(BASE_LIB_PATH)/%.$(SHLIB_EXT)
@@ -937,31 +1004,8 @@ else
 	@$(MV) $(@F) $(INSTALL_LIBDIR)/
 endif
 
-
 # Install shared library symlink containing only .so major version.
 $(INSTALL_LIBDIR)/%.$(LIBBLIS_SO_MAJ_EXT): $(INSTALL_LIBDIR)/%.$(LIBBLIS_SO_MMB_EXT)
-ifeq ($(ENABLE_VERBOSE),yes)
-	$(SYMLINK) $(<F) $(@F)
-	$(MV) $(@F) $(INSTALL_LIBDIR)/
-else
-	@echo "Installing symlink $(@F) into $(INSTALL_LIBDIR)/"
-	@$(SYMLINK) $(<F) $(@F)
-	@$(MV) $(@F) $(INSTALL_LIBDIR)/
-endif
-
-# Install static library symlink containing version and config family.
-$(INSTALL_LIBDIR)/%-$(VERS_CONF).a: $(INSTALL_LIBDIR)/%.a
-ifeq ($(ENABLE_VERBOSE),yes)
-	$(SYMLINK) $(<F) $(@F)
-	$(MV) $(@F) $(INSTALL_LIBDIR)/
-else
-	@echo "Installing symlink $(@F) into $(INSTALL_LIBDIR)/"
-	@$(SYMLINK) $(<F) $(@F)
-	@$(MV) $(@F) $(INSTALL_LIBDIR)/
-endif
-
-# Install shared library symlink containing version and config family.
-$(INSTALL_LIBDIR)/%-$(VERS_CONF).$(SHLIB_EXT): $(INSTALL_LIBDIR)/%.$(SHLIB_EXT)
 ifeq ($(ENABLE_VERBOSE),yes)
 	$(SYMLINK) $(<F) $(@F)
 	$(MV) $(@F) $(INSTALL_LIBDIR)/

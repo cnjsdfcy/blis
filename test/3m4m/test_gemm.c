@@ -35,9 +35,6 @@
 #include <unistd.h>
 #include "blis.h"
 
-void zgemm3m_( f77_char*, f77_char*, f77_int*, f77_int*, f77_int*, dcomplex*, dcomplex*, f77_int*, dcomplex*, f77_int*, dcomplex*, dcomplex*, f77_int* );
-
-
 //#define PRINT
 
 int main( int argc, char** argv )
@@ -148,9 +145,6 @@ int main( int argc, char** argv )
 		bli_obj_create( dt, m, k, 0, 0, &a );
 		bli_obj_create( dt, k, n, 0, 0, &b );
 		bli_obj_create( dt, m, n, 0, 0, &c );
-		//bli_obj_create( dt, m, k, 2, 2*m, &a );
-		//bli_obj_create( dt, k, n, 2, 2*k, &b );
-		//bli_obj_create( dt, m, n, 2, 2*m, &c );
 		bli_obj_create( dt, m, n, 0, 0, &c_save );
 
 		bli_randm( &a );
@@ -166,7 +160,7 @@ int main( int argc, char** argv )
 
 		bli_copym( &c, &c_save );
 	
-#ifdef BLIS
+#if 0 //def BLIS
 		bli_ind_disable_all_dt( dt );
 		bli_ind_enable_dt( ind, dt );
 #endif
@@ -176,7 +170,6 @@ int main( int argc, char** argv )
 		for ( r = 0; r < n_repeats; ++r )
 		{
 			bli_copym( &c_save, &c );
-
 
 			dtime = bli_clock();
 
